@@ -11,7 +11,7 @@ body{
     width: 100vw;
 }
 .container-fluid{
-    padding: 30px 120px;
+    padding: 30px 250px;
 }
 .text-background{
     color: var(--color_background);
@@ -25,10 +25,11 @@ body{
     margin-bottom: 3px;
 }
 #temperature{
-    font-size: 80px;
+    font-size: 95px;
     font-weight: 700;
     line-height: .8;
     margin-bottom: 20px;
+    transform: translateX(-5%);
 }
 #location{
     color: rgb(22, 81, 120);
