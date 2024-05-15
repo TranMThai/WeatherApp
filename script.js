@@ -21,25 +21,29 @@ function hourlyObject(weather, time, temp) {
 function getWeather(city) {
     (
         async () => {
-            // get data weather now
-            const openWeatherAPINow = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${city}&appid=${key}`
-            const responseNow = await fetch(openWeatherAPINow)
-            const dataNow = await responseNow.json()
+            try {
+                // get data weather now
+                const openWeatherAPINow = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${city}&appid=${key}`
+                const responseNow = await fetch(openWeatherAPINow)
+                const dataNow = await responseNow.json()
 
-            // get data weather forecast
-            const openWeatherAPIForecast = `https://api.openweathermap.org/data/2.5/forecast?units=metric&q=${city}&appid=${key}`
-            const responseForecast = await fetch(openWeatherAPIForecast)
-            const dataForecast = await responseForecast.json()
+                // get data weather forecast
+                const openWeatherAPIForecast = `https://api.openweathermap.org/data/2.5/forecast?units=metric&q=${city}&appid=${key}`
+                const responseForecast = await fetch(openWeatherAPIForecast)
+                const dataForecast = await responseForecast.json()
 
 
-            refresh(dataNow, dataForecast)
+                refresh(dataNow, dataForecast)
+            } catch (error) {
+                console.log("Lỗi không gọi được API")
+            }
         }
     )()
 }
 
 
 function refresh(dataNow, dataForecast) {
-    let time = getTimeInTimeZone(dataNow.timezone)
+    const time = getTimeInTimeZone(dataNow.timezone)
 
     //detail
     weatherNow.textContent = dataNow.weather[0].main
@@ -50,27 +54,50 @@ function refresh(dataNow, dataForecast) {
 
     //daily
     refreshDailyHTML(getDailyWeather(time, dataForecast))
+
+    //hourly
+    let hourlyWeather = getHourlyWeather(time, dataForecast)
+    hourlyWeather.unshift(new hourlyObject(dataNow.weather[0].main, "Now", Math.round(dataNow.main.temp) + '°'))
+    refreshHourlyHTML(hourlyWeather)
 }
 
-function refreshDailyHTML(dataDaily) {
+function refreshDailyHTML(data) {
     let html = ``
-    for (let i in dataDaily) {
+    for (const i in data) {
         html += `
         <div class="col-3">
             <div class="row justify-content-center align-items-center my-3 mx-3 rounded-3 ${i == 0 ? 'today' : ''}">
                 <div class="col-5 d-flex justify-content-center align-items-center">
-                    <img src="icon/${getIcon(getWeatherInDay(dataDaily[i].weather))}" alt="" height="60px">
+                    <img src="icon/${getIcon(getWeatherInDay(data[i].weather))}" alt="" height="60px">
                 </div>
                 <div class="col-7">
-                    <p class="text-background name-daily">${i == 0 ? 'Today' : dataDaily[i].day + '.'}</p>
-                        <span class="max_temp_daily text-background me-2">${dataDaily[i].max}°</span>
-                        <span class="min_temp_daily text-background">${dataDaily[i].min}°</span>
+                    <p class="text-background name-daily">${i == 0 ? 'Today' : data[i].day + '.'}</p>
+                        <span class="max_temp_daily text-background me-2">${data[i].max}°</span>
+                        <span class="min_temp_daily text-background">${data[i].min}°</span>
                 </div>
             </div>
         </div>
         `
     }
     document.querySelector(".daily_nav").innerHTML = html
+}
+
+function refreshHourlyHTML(dataHourly) {
+    let html = ``
+    for (const data of dataHourly) {
+        html += `
+        <div class="col-2">
+            <div class="bg-white py-2 rounded-4 hourly_now">
+                <p class="text-background py-2 m-0" style="font-size: 23px; text-align: center;">${data.time}</p>
+                <div class="d-flex justify-content-center">
+                    <img src="icon/${getIcon(data.weather)}" alt="" width="60px">
+                </div>
+                <p class="text-background py-2 m-0 fw-bold" style="font-size: 22px; text-align: center;">${data.temp}</p>
+            </div>
+        </div>
+        `
+    }
+    document.querySelector(".hourly_nav").innerHTML = html
 }
 
 function getWeatherInDay(arrWeather) {
@@ -84,6 +111,7 @@ function getWeatherInDay(arrWeather) {
         ["Drizzle", 0],
         ["Thunderstorm", 0]
     ])
+
     for (const data of arrWeather) {
         weathers.set(data, weathers.get(data) + 1)
     }
@@ -91,8 +119,8 @@ function getWeatherInDay(arrWeather) {
     let weather = ''
     let max = 0
 
-    weathers.forEach((value,key)=>{
-        if(max<=value){
+    weathers.forEach((value, key) => {
+        if (max <= value) {
             max = value
             weather = key
         }
@@ -104,9 +132,9 @@ function getWeatherInDay(arrWeather) {
 function getDailyWeather(time, dataForecast) {
     let timeDaiLy = []
     let arrDaily = []
-    for (let data of dataForecast.list) {
-        let date = new Date(data.dt_txt)
-        let timeForecast = date.toDateString()
+    for (const data of dataForecast.list) {
+        const date = new Date(data.dt_txt)
+        const timeForecast = date.toDateString()
         if (!timeDaiLy.includes(timeForecast) && (date.getDate() >= time.getDate() || date.getMonth() > time.getMonth())) {
             timeDaiLy.push(timeForecast)
             if (timeDaiLy.length >= 5) {
@@ -122,7 +150,7 @@ function getDailyWeather(time, dataForecast) {
             else {
 
             }
-            let index = arrDaily.length - 1
+            const index = arrDaily.length - 1
 
             arrDaily[index].day = timeForecast.substring(0, 3)
 
@@ -136,6 +164,27 @@ function getDailyWeather(time, dataForecast) {
         }
     }
     return arrDaily
+}
+
+function getHourlyWeather(time, dataForecast) {
+    let arrHourly = []
+    let i = 0
+    for (const data of dataForecast.list) {
+        const date = new Date(data.dt_txt)
+        if (date > time) {
+
+            const weather = data.weather[0].main
+            const time = `${new Date(data.dt_txt).getHours()}:00`
+            const temp = Math.round(data.main.temp) + "°"
+
+            arrHourly.push(new hourlyObject(weather, time, temp))
+            i++
+        }
+
+        if (i >= 5) break
+    }
+
+    return arrHourly
 }
 
 function getTimeInTimeZone(offsetInSeconds) {
