@@ -105,8 +105,9 @@ function getDailyWeather(time, dataForecast) {
     let timeDaiLy = []
     let arrDaily = []
     for (let data of dataForecast.list) {
-        let timeForecast = new Date(data.dt_txt).toDateString()
-        if (!timeDaiLy.includes(timeForecast) && new Date(data.dt_txt) > time) {
+        let date = new Date(data.dt_txt)
+        let timeForecast = date.toDateString()
+        if (!timeDaiLy.includes(timeForecast) && (date.getDate() >= time.getDate() || date.getMonth() > time.getMonth())) {
             timeDaiLy.push(timeForecast)
             if (timeDaiLy.length >= 5) {
                 break;
