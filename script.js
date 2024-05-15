@@ -5,6 +5,18 @@ let weatherIconNow = document.querySelector("#weather_icon")
 let temperatureNow = document.querySelector("#temperature")
 let locationNow = document.querySelector("#location")
 
+function dailyObject(weather, day, max, min) {
+    this.weather = []
+    this.day = day
+    this.max = max
+    this.min = min
+}
+
+function hourlyObject(weather, time, temp) {
+    this.weather = weather
+    this.time = time
+    this.temp = temp
+}
 
 function getWeather(city) {
     (
@@ -47,10 +59,10 @@ function refreshDailyHTML(dataDaily) {
         <div class="col-3">
             <div class="row justify-content-center align-items-center my-3 mx-3 rounded-3 ${i == 0 ? 'today' : ''}">
                 <div class="col-5 d-flex justify-content-center align-items-center">
-                    <img src="icon/${getIcon(dataDaily[i].weather[0])}" alt="" height="60px">
+                    <img src="icon/${getIcon(getWeatherInDay(dataDaily[i].weather))}" alt="" height="60px">
                 </div>
                 <div class="col-7">
-                    <p class="text-background name-daily">${i == 0 ? 'Today' : dataDaily[i].day+'.'}</p>
+                    <p class="text-background name-daily">${i == 0 ? 'Today' : dataDaily[i].day + '.'}</p>
                         <span class="max_temp_daily text-background me-2">${dataDaily[i].max}°</span>
                         <span class="min_temp_daily text-background">${dataDaily[i].min}°</span>
                 </div>
@@ -61,28 +73,46 @@ function refreshDailyHTML(dataDaily) {
     document.querySelector(".daily_nav").innerHTML = html
 }
 
-function dailyObject(weather, day, max, min) {
-    this.weather = []
-    this.day = day
-    this.max = max
-    this.min = min
+function getWeatherInDay(arrWeather) {
+
+    let weathers = new Map([
+        ["Clouds", 0],
+        ["Clear", 0],
+        ["Atmosphere", 0],
+        ["Snow", 0],
+        ["Rain", 0],
+        ["Drizzle", 0],
+        ["Thunderstorm", 0]
+    ])
+    for (const data of arrWeather) {
+        weathers.set(data, weathers.get(data) + 1)
+    }
+
+    let weather = ''
+    let max = 0
+
+    weathers.forEach((value,key)=>{
+        if(max<=value){
+            max = value
+            weather = key
+        }
+    })
+
+    return weather
 }
 
 function getDailyWeather(time, dataForecast) {
-    let day = time.getDate()
-    let month = time.getMonth()
     let timeDaiLy = []
     let arrDaily = []
     for (let data of dataForecast.list) {
         let timeForecast = new Date(data.dt_txt).toDateString()
-        if (!timeDaiLy.includes(timeForecast)) {
+        if (!timeDaiLy.includes(timeForecast) && new Date(data.dt_txt) > time) {
             timeDaiLy.push(timeForecast)
             if (timeDaiLy.length >= 5) {
                 break;
             } else {
                 arrDaily.push(new dailyObject())
             }
-
         }
         if (timeForecast == timeDaiLy[timeDaiLy.length - 1]) {
             if (arrDaily.length === 0) {
@@ -93,7 +123,7 @@ function getDailyWeather(time, dataForecast) {
             }
             let index = arrDaily.length - 1
 
-            arrDaily[index].day = timeForecast.substring(0,3)
+            arrDaily[index].day = timeForecast.substring(0, 3)
 
             arrDaily[index].weather.push(data.weather[0].main)
 
@@ -144,33 +174,4 @@ function getIcon(weather) {
     }
 }
 
-function getDay(day) {
-    switch (day) {
-        case 1: {
-            return 'Mon.'
-        }
-        case 2: {
-            return 'Tue.'
-        }
-        case 3: {
-            return 'Wed.'
-        }
-        case 4: {
-            return 'Thu.'
-        }
-        case 5: {
-            return 'Fri.'
-        }
-        case 6: {
-            return 'Sat.'
-        }
-        case 7: {
-            return 'Sun.'
-        }
-        default: {
-            return 'Bug!!!'
-        }
-    }
-}
-
-getWeather("New york")
+getWeather("Ha Noi")
