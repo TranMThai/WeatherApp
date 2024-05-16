@@ -7,11 +7,6 @@
     <title>Weather app</title>
     <link rel="stylesheet" href="lib/bootstrap.css">
     <link rel="stylesheet" href="style.css">
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 
 <body>
@@ -22,7 +17,7 @@
                 <div class="detail d-flex justify-content-center align-items-center my-4">
                     <span class="row align-items-center">
                         <div class="col-6">
-                            <img src="icon/sun.png" alt="" height="120px" id="weather_icon">
+                            <img src="images/sun.png" alt="" height="120px" id="weather_icon">
                         </div>
                         <div class="col-6">
                             <p id="weather_main" class="text-white">Sunny</p>
@@ -42,97 +37,17 @@
                 </div>
             </div>
             <div class="col-5 chart my-4 ps-5">
-                <div class="d-flex flex-column h-100 py-5 ps-2 gap-4">
-                    <div class="col-12 bg-white rounded-5 overflow-hidden flex-grow-1">
-                        <div class="w-100 h-100">
-                            <div class="info d-flex px-4 pt-3 justify-content-between">
-                                <div>
-                                    <h3 class="text-background fw-bold m-0">Temperature</h3>
-                                    <p class="text-background mb-1">Summary</p>
-                                </div>
-                                <div>
-                                    <div class="bg-background rounded-circle mt-2 d-flex justify-content-center align-items-center"
-                                        style="aspect-ratio: 1/1; width: 50px;">
-                                        <i class="fa-solid fa-temperature-empty text-white fs-3"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="container-canvas">
-                                <canvas id="temp-canvas"></canvas>
-                            </div>
-                            <div class="d-flex justify-content-center">
-                                <div class="d-flex justify-content-evenly hour_canvas">
-                                    <div class="text-background time-label0">Now</div>
-                                    <div class="text-background time-label1">6:00</div>
-                                    <div class="text-background time-label2">9:00</div>
-                                    <div class="text-background time-label3">12:00</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 bg-white rounded-5 overflow-hidden flex-grow-1">
-                        <div class="w-100 h-100">
-                            <div class="info d-flex px-4 pt-3 justify-content-between">
-                                <div>
-                                    <h3 class="text-background fw-bold m-0">Humidity</h3>
-                                    <p class="text-background mb-1">Summary</p>
-                                </div>
-                                <div>
-                                    <div class="bg-background rounded-circle mt-2 d-flex justify-content-center align-items-center"
-                                        style="aspect-ratio: 1/1; width: 50px;">
-                                        <i class="fa-solid fa-tint text-white fs-3"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="container-canvas">
-                                <canvas id="humidity-canvas"></canvas>
-                            </div>
-                            <div class="d-flex justify-content-center">
-                                <div class="d-flex justify-content-evenly hour_canvas">
-                                    <div class="text-background time-label0">Now</div>
-                                    <div class="text-background time-label1">6:00</div>
-                                    <div class="text-background time-label2">9:00</div>
-                                    <div class="text-background time-label3">12:00</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 bg-white rounded-5 overflow-hidden flex-grow-1">
-                        <div class="w-100 h-100">
-                            <div class="info d-flex px-4 pt-3 justify-content-between">
-                                <div>
-                                    <h3 class="text-background fw-bold m-0">Wind</h3>
-                                    <p class="text-background mb-1">Summary</p>
-                                </div>
-                                <div>
-                                    <div class="bg-background rounded-circle mt-2 d-flex justify-content-center align-items-center"
-                                        style="aspect-ratio: 1/1; width: 50px;">
-                                        <i class="fa-solid fa-wind text-white fs-3"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="container-canvas">
-                                <canvas id="wind-canvas"></canvas>
-                            </div>
-                            <div class="d-flex justify-content-center">
-                                <div class="d-flex justify-content-evenly hour_canvas">
-                                    <div class="text-background time-label0">Now</div>
-                                    <div class="text-background time-label1">6:00</div>
-                                    <div class="text-background time-label2">9:00</div>
-                                    <div class="text-background time-label3">12:00</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="d-flex flex-column h-100 py-5 ps-2 gap-4 chart_nav"></div>
             </div>
         </div>
     </div>
 
 
     <script src="lib/font-fontawesome-ae333ffef2.js"></script>
-    <script src="script.js"></script>
-    <script src="setup.js"></script>
+    <script src="app.js"></script>
+    <script src="render.js"></script>
+    <script src="resize.js"></script>
+    <script src="themeSwitcher.js"></script>
 </body>
 
 </html>
