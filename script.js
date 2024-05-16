@@ -49,8 +49,8 @@ function refresh(dataNow, dataForecast) {
 
     //detail
     weatherNow.textContent = dataNow.weather[0].main
-    weatherIconNow.src = `icon/${getIcon(dataNow.weather[0].main)}`
-    temperatureNow.textContent = Math.round(dataNow.main.temp) + '°'
+    weatherIconNow.src = `icon/${getImage(dataNow.weather[0].main)}`
+    temperatureNow.textContent = Math.floor(dataNow.main.temp) + '°'
     locationNow.textContent = `${dataNow.name}, ${dataNow.sys.country}`
 
 
@@ -59,7 +59,7 @@ function refresh(dataNow, dataForecast) {
 
     //hourly
     let hourlyWeather = getHourlyWeather(time, dataForecast)
-    const hourlyNow = new hourlyObject(dataNow.weather[0].main, "Now", Math.round(dataNow.main.temp), dataNow.main.humidity, getKilometerPerHour(dataNow.wind.speed))
+    const hourlyNow = new hourlyObject(dataNow.weather[0].main, "Now", Math.floor(dataNow.main.temp), dataNow.main.humidity, getKilometerPerHour(dataNow.wind.speed))
     hourlyWeather.unshift(hourlyNow)
     refreshHourlyHTML(hourlyWeather)
 
@@ -74,7 +74,7 @@ function refreshDailyHTML(data) {
         <div class="col-3">
             <div class="row justify-content-center align-items-center my-3 mx-3 rounded-3 ${i == 0 ? 'today' : ''}">
                 <div class="col-5 d-flex justify-content-center align-items-center">
-                    <img src="icon/${getIcon(getWeatherInDay(data[i].weather))}" alt="" height="60px">
+                    <img src="icon/${getImage(getWeatherInDay(data[i].weather))}" alt="" height="60px">
                 </div>
                 <div class="col-7">
                     <p class="text-background name-daily">${i == 0 ? 'Today' : data[i].day + '.'}</p>
@@ -96,7 +96,7 @@ function refreshHourlyHTML(dataHourly) {
             <div class="bg-white py-2 rounded-4 hourly_now">
                 <p class="text-background py-2 m-0" style="font-size: 23px; text-align: center;">${data.time}</p>
                 <div class="d-flex justify-content-center">
-                    <img src="icon/${getIcon(data.weather)}" alt="" width="60px">
+                    <img src="icon/${getImage(data.weather)}" alt="" width="60px">
                 </div>
                 <p class="text-background py-2 m-0 fw-bold" style="font-size: 22px; text-align: center;">${data.temp}°</p>
             </div>
@@ -107,54 +107,69 @@ function refreshHourlyHTML(dataHourly) {
 }
 
 function refreshCanvasTemp(dataHourly) {
-    drawCanvasTemp(dataHourly)
+    drawCanvasTemp(dataHourly, "temp-canvas", "°")
+    drawCanvasTemp(dataHourly, "humidity-canvas", "%")
+    drawCanvasTemp(dataHourly, "wind-canvas", "km/h")
     setHour(dataHourly)
 }
 
 function getMinMax(datas) {
-    let min = datas[0].temp
-    let max = datas[0].temp
+    let min = datas[0]
+    let max = datas[0]
     for (let i = 0; i < 4; i++) {
-        max = Math.max(max, datas[i].temp)
-        min = Math.min(min, datas[i].temp)
+        max = Math.max(max, datas[i])
+        min = Math.min(min, datas[i])
     }
     return { min, max }
 }
 
-function drawCanvasTemp(dataHourly) {
+function drawCanvasTemp(dataHourly, nameCanvas, symbol) {
 
-    const max_min = getMinMax(dataHourly)
+    let datas = []
+    if (nameCanvas === "temp-canvas") {
+        datas = dataHourly.map(data => data.temp)
+    }
+    else if (nameCanvas === "humidity-canvas") {
+        datas = dataHourly.map(data => data.humidity)
+    }
+    else {
+        datas = dataHourly.map(data => data.wind)
+    }
+
+    const max_min = getMinMax(datas)
     const max = max_min.max
     const min = max_min.min
 
-    const canvas = document.getElementById("temp-canvas")
+    const canvas = document.getElementById(nameCanvas)
     const difference = max - min
-    const unitHeight = canvas.height / 150
+    const unitHeight = canvas.height / 200
     const width = canvas.width / 100
     const ctx = canvas.getContext("2d")
 
 
     ctx.beginPath()
 
-    ctx.moveTo(0,(canvas.height - (((dataHourly[0].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight)
+    ctx.moveTo(0, (canvas.height - (((datas[0] - min) / (difference)) * 100 * unitHeight)) - 75 * unitHeight)
 
     for (let i = 0; i < 4; i++) {
-        ctx.lineTo(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight)
+        ctx.lineTo(width * 20 * (i + 1), (canvas.height - (((datas[i] - min) / (difference)) * 100 * unitHeight)) - 75 * unitHeight)
     }
 
-    ctx.lineTo(width * 100, (canvas.height - (((dataHourly[3].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight)
+    ctx.lineTo(width * 100, (canvas.height - (((datas[3] - min) / (difference)) * 100 * unitHeight)) - 75 * unitHeight)
 
     ctx.lineCap = "round"
     ctx.lineWidth = 4
     ctx.strokeStyle = "rgb(100, 141, 229)"
     ctx.stroke()
 
-
     for (let i = 0; i < 4; i++) {
         ctx.beginPath()
-        ctx.arc(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight, 10, 0, 2 * Math.PI)
+        ctx.arc(width * 20 * (i + 1), (canvas.height - (((datas[i] - min) / (difference)) * 100 * unitHeight)) - 75 * unitHeight, 10, 0, 2 * Math.PI)
         ctx.fillStyle = "rgb(100, 141, 229)"
         ctx.fill()
+
+        ctx.font = "bold 20px Arial";
+        ctx.fillText(datas[i]+symbol, width * 20 * (i + 1) - (symbol==="°"?10:symbol==="%"?15:30), (canvas.height - (((datas[i] - min) / (difference)) * 100 * unitHeight)) - 10 * unitHeight);
     }
 
 }
@@ -224,9 +239,9 @@ function getDailyWeather(time, dataForecast) {
 
             arrDaily[index].weather.push(data.weather[0].main)
 
-            if (arrDaily[index].min > data.main.temp || arrDaily[index].min === undefined) arrDaily[index].min = Math.round(data.main.temp)
+            if (arrDaily[index].min > data.main.temp || arrDaily[index].min === undefined) arrDaily[index].min = Math.floor(data.main.temp)
 
-            if (arrDaily[index].max < data.main.temp || arrDaily[index].max === undefined) arrDaily[index].max = Math.round(data.main.temp)
+            if (arrDaily[index].max < data.main.temp || arrDaily[index].max === undefined) arrDaily[index].max = Math.floor(data.main.temp)
 
             continue;
         }
@@ -243,7 +258,7 @@ function getHourlyWeather(time, dataForecast) {
 
             const weather = data.weather[0].main
             const time = `${new Date(data.dt_txt).getHours()}:00`
-            const temp = Math.round(data.main.temp)
+            const temp = Math.floor(data.main.temp)
             const humidity = data.main.humidity
             const wind = getKilometerPerHour(data.wind.speed)
             arrHourly.push(new hourlyObject(weather, time, temp, humidity, wind))
@@ -258,7 +273,7 @@ function getHourlyWeather(time, dataForecast) {
 function getKilometerPerHour(speed) {
     const meterPerHour = speed * 60 * 60
     const kilometerPerHour = meterPerHour / 1000
-    return Math.round(kilometerPerHour)
+    return Math.floor(kilometerPerHour)
 }
 
 function getTimeInTimeZone(offsetInSeconds) {
@@ -272,7 +287,7 @@ function getTimeInTimeZone(offsetInSeconds) {
     return targetTime;
 }
 
-function getIcon(weather) {
+function getImage(weather) {
     switch (weather) {
         case 'Thunderstorm': {
             return 'thunderstorm.png'
