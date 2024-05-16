@@ -12,10 +12,12 @@ function dailyObject(weather, day, max, min) {
     this.min = min
 }
 
-function hourlyObject(weather, time, temp) {
+function hourlyObject(weather, time, temp, humidity, wind) {
     this.weather = weather
     this.time = time
     this.temp = temp
+    this.humidity = humidity
+    this.wind = wind
 }
 
 function getWeather(city) {
@@ -57,8 +59,12 @@ function refresh(dataNow, dataForecast) {
 
     //hourly
     let hourlyWeather = getHourlyWeather(time, dataForecast)
-    hourlyWeather.unshift(new hourlyObject(dataNow.weather[0].main, "Now", Math.round(dataNow.main.temp) + '°'))
+    const hourlyNow = new hourlyObject(dataNow.weather[0].main, "Now", Math.round(dataNow.main.temp), dataNow.main.humidity, getKilometerPerHour(dataNow.wind.speed))
+    hourlyWeather.unshift(hourlyNow)
     refreshHourlyHTML(hourlyWeather)
+
+    //canvas temp
+    refreshCanvasTemp(hourlyWeather)
 }
 
 function refreshDailyHTML(data) {
@@ -92,12 +98,74 @@ function refreshHourlyHTML(dataHourly) {
                 <div class="d-flex justify-content-center">
                     <img src="icon/${getIcon(data.weather)}" alt="" width="60px">
                 </div>
-                <p class="text-background py-2 m-0 fw-bold" style="font-size: 22px; text-align: center;">${data.temp}</p>
+                <p class="text-background py-2 m-0 fw-bold" style="font-size: 22px; text-align: center;">${data.temp}°</p>
             </div>
         </div>
         `
     }
     document.querySelector(".hourly_nav").innerHTML = html
+}
+
+function refreshCanvasTemp(dataHourly) {
+    drawCanvasTemp(dataHourly)
+    setHour(dataHourly)
+}
+
+function getMinMax(datas) {
+    let min = datas[0].temp
+    let max = datas[0].temp
+    for (let i = 0; i < 4; i++) {
+        max = Math.max(max, datas[i].temp)
+        min = Math.min(min, datas[i].temp)
+    }
+    return { min, max }
+}
+
+function drawCanvasTemp(dataHourly) {
+
+    const max_min = getMinMax(dataHourly)
+    const max = max_min.max
+    const min = max_min.min
+
+    const canvas = document.getElementById("temp-canvas")
+    const difference = max - min
+    const unitHeight = canvas.height / 150
+    const width = canvas.width / 100
+    const ctx = canvas.getContext("2d")
+
+
+    ctx.beginPath()
+
+    ctx.moveTo(0,(canvas.height - (((dataHourly[0].temp - min) / (difference)) * 100 * unitHeight))-30)
+
+    for (let i = 0; i < 4; i++) {
+        ctx.lineTo(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-30)
+    }
+
+    ctx.lineTo(width * 100, (canvas.height - (((dataHourly[3].temp - min) / (difference)) * 100 * unitHeight))-30)
+
+    ctx.lineCap = "round"
+    ctx.lineWidth = 4
+    ctx.strokeStyle = "rgb(100, 141, 229)"
+    ctx.stroke()
+
+
+    for (let i = 0; i < 4; i++) {
+        ctx.beginPath()
+        ctx.arc(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-30, 10, 0, 2 * Math.PI)
+        ctx.fillStyle = "rgb(100, 141, 229)"
+        ctx.fill()
+    }
+
+}
+
+function setHour(dataHourly) {
+    for (let i = 0; i < 4; i++) {
+        let docs = document.querySelectorAll(`.time-label${i}`)
+        for (let doc of docs) {
+            doc.textContent = dataHourly[i].time
+        }
+    }
 }
 
 function getWeatherInDay(arrWeather) {
@@ -175,16 +243,22 @@ function getHourlyWeather(time, dataForecast) {
 
             const weather = data.weather[0].main
             const time = `${new Date(data.dt_txt).getHours()}:00`
-            const temp = Math.round(data.main.temp) + "°"
-
-            arrHourly.push(new hourlyObject(weather, time, temp))
+            const temp = Math.round(data.main.temp)
+            const humidity = data.main.humidity
+            const wind = getKilometerPerHour(data.wind.speed)
+            arrHourly.push(new hourlyObject(weather, time, temp, humidity, wind))
             i++
         }
 
         if (i >= 5) break
     }
-
     return arrHourly
+}
+
+function getKilometerPerHour(speed) {
+    const meterPerHour = speed * 60 * 60
+    const kilometerPerHour = meterPerHour / 1000
+    return Math.round(kilometerPerHour)
 }
 
 function getTimeInTimeZone(offsetInSeconds) {
@@ -225,3 +299,4 @@ function getIcon(weather) {
 }
 
 getWeather("Ha Noi")
+
