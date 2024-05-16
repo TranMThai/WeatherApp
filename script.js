@@ -136,13 +136,13 @@ function drawCanvasTemp(dataHourly) {
 
     ctx.beginPath()
 
-    ctx.moveTo(0,(canvas.height - (((dataHourly[0].temp - min) / (difference)) * 100 * unitHeight))-30)
+    ctx.moveTo(0,(canvas.height - (((dataHourly[0].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight)
 
     for (let i = 0; i < 4; i++) {
-        ctx.lineTo(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-30)
+        ctx.lineTo(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight)
     }
 
-    ctx.lineTo(width * 100, (canvas.height - (((dataHourly[3].temp - min) / (difference)) * 100 * unitHeight))-30)
+    ctx.lineTo(width * 100, (canvas.height - (((dataHourly[3].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight)
 
     ctx.lineCap = "round"
     ctx.lineWidth = 4
@@ -152,7 +152,7 @@ function drawCanvasTemp(dataHourly) {
 
     for (let i = 0; i < 4; i++) {
         ctx.beginPath()
-        ctx.arc(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-30, 10, 0, 2 * Math.PI)
+        ctx.arc(width * 20 * (i + 1),(canvas.height - (((dataHourly[i].temp - min) / (difference)) * 100 * unitHeight))-35*unitHeight, 10, 0, 2 * Math.PI)
         ctx.fillStyle = "rgb(100, 141, 229)"
         ctx.fill()
     }
