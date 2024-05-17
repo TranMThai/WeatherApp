@@ -115,7 +115,7 @@ function setHour(dataHourly) {
     for (let i = 0; i < 4; i++) {
         let docs = document.querySelectorAll(`.time-label${i}`)
         for (let doc of docs) {
-            doc.textContent = dataHourly[i].time + ":00"
+            doc.textContent = i==0?"Now":dataHourly[i].time + ":00"
         }
     }
 }

@@ -36,7 +36,7 @@ function hourlyObject(weather, time, temp, humidity, wind) {
     this.wind = wind
 }
 
-getWeather ("Vietnam")
+getWeather ("Hanoi")
 
 function getWeather(city) {
     (
@@ -52,10 +52,11 @@ function getWeather(city) {
                 const responseForecast = await fetch(openWeatherAPIForecast)
                 const dataForecast = await responseForecast.json()
 
-
+                // refresh
                 refresh(dataNow, dataForecast)
             } catch (error) {
                 console.log("Lỗi không gọi được API")
+                console.log(error)
             }
         }
     )()
@@ -66,14 +67,11 @@ function refresh(dataNow, dataForecast) {
     time = getTimeInTimeZone(dataNow.timezone)
 
     //detail
-    document.querySelector("#weather_main").textContent = dataNow.weather[0].main
-    document.querySelector("#weather_icon").src = `images/${getImage(dataNow.weather[0].main)}`
-    document.querySelector("#temperature").textContent = Math.floor(dataNow.main.temp) + '°'
-    document.querySelector("#location").textContent = `${dataNow.name}, ${dataNow.sys.country}`
-
+    loadDetail(dataNow)
 
     //daily
-    loadDailyHTML(getDailyWeather(time, dataForecast))
+    const dataDailyWeather = getDailyWeather(time, dataForecast)
+    loadDailyHTML(dataDailyWeather)
 
     //hourly
     let hourlyWeather = getHourlyWeather(time, dataForecast)
@@ -83,6 +81,9 @@ function refresh(dataNow, dataForecast) {
 
     //canvas temp
     loadCanvasTemp(hourlyWeather)
+
+    //message
+    loadMessage(dataDailyWeather)
 
     //change background color
     changeColorBackground()

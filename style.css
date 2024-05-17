@@ -2,6 +2,9 @@
     --color_background_light: rgb(100, 141, 229);
     --color_background_dark: rgb(59, 113, 147);
 }
+body{
+    height: 100vh;
+}
 
 *,
 *::before,

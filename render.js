@@ -1,3 +1,19 @@
+function loadDetail(data) {
+    let html = `
+    <span class="row align-items-center">
+        <div class="col-6">
+            <img src="images/${getImage(data.weather[0].main)}" alt="" height="120px" id="weather_icon">
+        </div>
+        <div class="col-6">
+            <p id="weather_main" class="text-white">${data.weather[0].main}</p>
+            <p id="temperature" class="text-white">${Math.floor(data.main.temp)}°</p>
+            <p id="location">${data.name}, ${data.sys.country}</p>
+        </div>
+    </span>
+    `
+    document.querySelector(".detail").innerHTML = html
+}
+
 function loadDailyHTML(data) {
     const bool = time.getHours() >= 18 || time.getHours() <= 5
 
@@ -44,7 +60,7 @@ function loadChartHTML() {
     let html = ``
     for (const chart of charts) {
         html += `
-        <div class="col-12 ${chart.name} rounded-5 overflow-hidden flex-grow-1 ${bool?"text-white":"text-background"} ${bool?"bg-background-dark":"bg-white"}">
+        <div class="col-12 ${chart.name} rounded-5 overflow-hidden flex-grow-1 ${bool ? "text-white" : "text-background"} ${bool ? "bg-background-dark" : "bg-white"}">
                         <div class="w-100 h-100">
                             <div class="info d-flex px-4 pt-3 justify-content-between">
                                 <div>
@@ -52,7 +68,7 @@ function loadChartHTML() {
                                     <p class="text-inherit mb-1">Summary</p>
                                 </div>
                                 <div>
-                                    <div class="${bool?"body-background-dark":"bg-background-light"} rounded-circle mt-2 d-flex justify-content-center align-items-center"
+                                    <div class="${bool ? "body-background-dark" : "bg-background-light"} rounded-circle mt-2 d-flex justify-content-center align-items-center"
                                         style="aspect-ratio: 1/1; width: 50px;">
                                         <i class="fa-solid ${chart.icon} text-white fs-3"></i>
                                     </div>
@@ -62,7 +78,7 @@ function loadChartHTML() {
                                 <canvas id="${chart.id}"></canvas>
                             </div>
                             <div class="d-flex justify-content-center">
-                                <div class="d-flex justify-content-evenly hour_canvas mx-5">
+                                <div class="d-flex justify-content-evenly hour_canvas mx-4">
                                     <div class="text-inherit time-label0">Now</div>
                                     <div class="text-inherit time-label1">6:00</div>
                                     <div class="text-inherit time-label2">9:00</div>
@@ -75,4 +91,8 @@ function loadChartHTML() {
     }
     document.querySelector(".chart_nav").innerHTML = html
     resizeCanvas()
+}
+
+function loadMessage(data){
+    document.querySelector("#message").textContent = dataMessage.find(d=>d.weather==getWeatherInDay(data[0].weather)).message
 }

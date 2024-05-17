@@ -1,7 +1,7 @@
-const daily_nav = document.querySelector(".daily_nav")
-const locationDom = document.querySelector("#location")
-const body = document.querySelector("body")
 function changeColorBackground() {
+    const daily_nav = document.querySelector(".daily_nav")
+    const locationDom = document.querySelector("#location")
+    const body = document.querySelector("body")
     if (time.getHours() >= 18 || time.getHours() <= 5) {
         daily_nav.classList.add("bg-background-dark")
         daily_nav.classList.remove("bg-white")
