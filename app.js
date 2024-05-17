@@ -35,20 +35,32 @@ function hourlyObject(weather, time, temp, humidity, wind) {
     this.humidity = humidity
     this.wind = wind
 }
+let lat;
+let lon;
 
-getWeather ("Hanoi")
+function resolveLocation(position) {
+    getWeather(position)
+}
 
-function getWeather(city) {
+navigator.geolocation.getCurrentPosition(resolveLocation)
+
+function getWeather(position) {
     (
         async () => {
             try {
                 // get data weather now
-                const openWeatherAPINow = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${city}&appid=${key}`
+                let openWeatherAPINow = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${position}&appid=${key}`
+                if(typeof position === "object"){
+                    openWeatherAPINow = `https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${key}`
+                }
                 const responseNow = await fetch(openWeatherAPINow)
                 const dataNow = await responseNow.json()
 
                 // get data weather forecast
-                const openWeatherAPIForecast = `https://api.openweathermap.org/data/2.5/forecast?units=metric&q=${city}&appid=${key}`
+                let openWeatherAPIForecast = `https://api.openweathermap.org/data/2.5/forecast?units=metric&q=${position}&appid=${key}`
+                if(typeof position === "object"){
+                    openWeatherAPIForecast = `https://api.openweathermap.org/data/2.5/forecast?units=metric&lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${key}`
+                }
                 const responseForecast = await fetch(openWeatherAPIForecast)
                 const dataForecast = await responseForecast.json()
 
