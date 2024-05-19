@@ -12,10 +12,19 @@
 <body>
 
     <div class="container-fluid h-100">
-        <div class="row h-100">
+
+        <div class="row">
+
             <div class="col-7 main">
-                <div class="detail d-flex justify-content-center align-items-center my-4">
-                    
+
+                <div class="rounded-pill d-flex justify-content-between" style="border: 1px solid white;">
+                    <i class="fa-solid fa-location-dot text-white fs-4 p-3"></i>
+                    <input type="text" class="fs-2 text-white mx-1" id="search" style="background-color: transparent; border: 0; outline: none; width: auto; flex-grow: 1;">
+                    <i class="fa-solid fa-magnifying-glass text-white fs-4 p-3" onclick="searchCity()"></i>
+                </div>
+
+                <div class="detail d-flex justify-content-center align-items-center">
+
                 </div>
                 <div class="message my-4">
                     <p id="message" class="text-white"></p>
@@ -27,8 +36,8 @@
                     <div class="row hourly_nav"></div>
                 </div>
             </div>
-            <div class="col-5 chart my-4 ps-5">
-                <div class="d-flex flex-column h-100 py-5 ps-2 gap-4 chart_nav"></div>
+            <div class="col-5 chart ps-4">
+                <div class="d-flex flex-column h-100 gap-4 chart_nav"></div>
             </div>
         </div>
     </div>

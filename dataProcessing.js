@@ -53,9 +53,9 @@ function getDailyWeather(time, dataForecast) {
 
             arrDaily[index].weather.push(data.weather[0].main)
 
-            if (arrDaily[index].min > data.main.temp || arrDaily[index].min === undefined) arrDaily[index].min = Math.floor(data.main.temp)
+            if (arrDaily[index].min > data.main.temp || arrDaily[index].min === undefined) arrDaily[index].min = Math.round(data.main.temp)
 
-            if (arrDaily[index].max < data.main.temp || arrDaily[index].max === undefined) arrDaily[index].max = Math.floor(data.main.temp)
+            if (arrDaily[index].max < data.main.temp || arrDaily[index].max === undefined) arrDaily[index].max = Math.round(data.main.temp)
 
             continue;
         }
@@ -72,7 +72,7 @@ function getHourlyWeather(time, dataForecast) {
 
             const weather = data.weather[0].main
             const time = new Date(data.dt_txt).getHours()
-            const temp = Math.floor(data.main.temp)
+            const temp = Math.round(data.main.temp)
             const humidity = data.main.humidity
             const wind = getKilometerPerHour(data.wind.speed)
             arrHourly.push(new hourlyObject(weather, time, temp, humidity, wind))
@@ -87,7 +87,7 @@ function getHourlyWeather(time, dataForecast) {
 function getKilometerPerHour(speed) {
     const meterPerHour = speed * 60 * 60
     const kilometerPerHour = meterPerHour / 1000
-    return Math.floor(kilometerPerHour)
+    return Math.round(kilometerPerHour)
 }
 
 function getTimeInTimeZone(offsetInSeconds) {

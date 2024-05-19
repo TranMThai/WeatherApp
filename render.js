@@ -6,7 +6,7 @@ function loadDetail(data) {
         </div>
         <div class="col-6">
             <p id="weather_main" class="text-white">${data.weather[0].main}</p>
-            <p id="temperature" class="text-white">${Math.floor(data.main.temp)}°</p>
+            <p id="temperature" class="text-white">${Math.round(data.main.temp)}°</p>
             <p id="location">${data.name}, ${data.sys.country}</p>
         </div>
     </span>

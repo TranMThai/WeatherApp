@@ -42,6 +42,13 @@ function resolveLocation(position) {
     getWeather(position)
 }
 
+function searchCity(){
+    const city = document.querySelector("#search").value
+    if(city != ''){
+        getWeather(city)
+    }
+}
+
 navigator.geolocation.getCurrentPosition(resolveLocation)
 
 function getWeather(position) {
@@ -74,7 +81,6 @@ function getWeather(position) {
     )()
 }
 
-
 function refresh(dataNow, dataForecast) {
     time = getTimeInTimeZone(dataNow.timezone)
 
@@ -87,7 +93,7 @@ function refresh(dataNow, dataForecast) {
 
     //hourly
     let hourlyWeather = getHourlyWeather(time, dataForecast)
-    const hourlyNow = new hourlyObject(dataNow.weather[0].main, time.getHours(), Math.floor(dataNow.main.temp), dataNow.main.humidity, getKilometerPerHour(dataNow.wind.speed))
+    const hourlyNow = new hourlyObject(dataNow.weather[0].main, time.getHours(), Math.round(dataNow.main.temp), dataNow.main.humidity, getKilometerPerHour(dataNow.wind.speed))
     hourlyWeather.unshift(hourlyNow)
     loadHourlyHTML(hourlyWeather)
 
@@ -101,8 +107,6 @@ function refresh(dataNow, dataForecast) {
     changeColorBackground()
 }
 
-
-
 function loadCanvasTemp(dataHourly) {
     loadChartHTML()
     drawCanvas(dataHourly, "temp-canvas", "°")
@@ -110,3 +114,9 @@ function loadCanvasTemp(dataHourly) {
     drawCanvas(dataHourly, "wind-canvas", "km/h")
     setHour(dataHourly)
 }
+
+document.getElementById('search').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        searchCity();
+    }
+});
