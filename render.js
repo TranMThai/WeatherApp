@@ -1,8 +1,8 @@
-function loadDetail(data) {
+function loadDetail(data, time) {
     let html = `
     <span class="row align-items-center">
         <div class="col-6">
-            <img src="images/${getImage(data.weather[0].main)}" alt="" height="120px" id="weather_icon">
+            <img src="images/${getImage(data.weather[0].main,time)}" alt="" height="120px" id="weather_icon">
         </div>
         <div class="col-6">
             <p id="weather_main" class="text-white">${data.weather[0].main}</p>
@@ -45,7 +45,7 @@ function loadHourlyHTML(data) {
             <div class="${data[i].time >= 18 || data[i].time <= 5 ? "bg-background-dark" : "bg-white"} py-2 rounded-4 hourly_now">
                 <p class="text-inherit py-2 m-0" style="font-size: 23px; text-align: center;">${i != 0 ? data[i].time + ":00" : "Now"}</p>
                 <div class="d-flex justify-content-center">
-                    <img src="images/${getImage(data[i].weather)}" alt="" width="60px">
+                    <img src="images/${getImage(data[i].weather,data[i].time)}" alt="" width="60px">
                 </div>
                 <p class="text-inherit py-2 m-0 fw-bold" style="font-size: 22px; text-align: center;">${data[i].temp}°</p>
             </div>

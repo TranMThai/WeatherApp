@@ -41,12 +41,6 @@ function getDailyWeather(time, dataForecast) {
             }
         }
         if (timeForecast == timeDaiLy[timeDaiLy.length - 1]) {
-            if (arrDaily.length === 0) {
-                arrDaily.push(new dailyObject())
-            }
-            else {
-
-            }
             const index = arrDaily.length - 1
 
             arrDaily[index].day = timeForecast.substring(0, 3)
@@ -56,8 +50,6 @@ function getDailyWeather(time, dataForecast) {
             if (arrDaily[index].min > data.main.temp || arrDaily[index].min === undefined) arrDaily[index].min = Math.round(data.main.temp)
 
             if (arrDaily[index].max < data.main.temp || arrDaily[index].max === undefined) arrDaily[index].max = Math.round(data.main.temp)
-
-            continue;
         }
     }
     return arrDaily
@@ -120,7 +112,7 @@ function setHour(dataHourly) {
     }
 }
 
-function getImage(weather) {
+function getImage(weather, time) {
     switch (weather) {
         case 'Thunderstorm': {
             return 'thunderstorm.png'
@@ -135,6 +127,9 @@ function getImage(weather) {
             return 'snow.png'
         }
         case 'Clear': {
+            if(time<=5||time>=18){
+                return 'moon.png'
+            }
             return 'sun.png'
         }
         case 'Clouds': {

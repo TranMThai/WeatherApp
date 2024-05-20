@@ -42,9 +42,9 @@ function resolveLocation(position) {
     getWeather(position)
 }
 
-function searchCity(){
+function searchCity() {
     const city = document.querySelector("#search").value
-    if(city != ''){
+    if (city != '') {
         getWeather(city)
     }
 }
@@ -57,7 +57,7 @@ function getWeather(position) {
             try {
                 // get data weather now
                 let openWeatherAPINow = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${position}&appid=${key}`
-                if(typeof position === "object"){
+                if (typeof position === "object") {
                     openWeatherAPINow = `https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${key}`
                 }
                 const responseNow = await fetch(openWeatherAPINow)
@@ -65,7 +65,7 @@ function getWeather(position) {
 
                 // get data weather forecast
                 let openWeatherAPIForecast = `https://api.openweathermap.org/data/2.5/forecast?units=metric&q=${position}&appid=${key}`
-                if(typeof position === "object"){
+                if (typeof position === "object") {
                     openWeatherAPIForecast = `https://api.openweathermap.org/data/2.5/forecast?units=metric&lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${key}`
                 }
                 const responseForecast = await fetch(openWeatherAPIForecast)
@@ -83,9 +83,8 @@ function getWeather(position) {
 
 function refresh(dataNow, dataForecast) {
     time = getTimeInTimeZone(dataNow.timezone)
-
     //detail
-    loadDetail(dataNow)
+    loadDetail(dataNow, time.getHours())
 
     //daily
     const dataDailyWeather = getDailyWeather(time, dataForecast)
@@ -115,7 +114,7 @@ function loadCanvasTemp(dataHourly) {
     setHour(dataHourly)
 }
 
-document.getElementById('search').addEventListener('keydown', function(event) {
+document.getElementById('search').addEventListener('keydown', function (event) {
     if (event.key === 'Enter') {
         searchCity();
     }
